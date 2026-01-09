@@ -1,0 +1,7 @@
+2025-12-30T13:15:21.117Z [INFO] Initializing project configuration...
+2025-12-30T13:15:21.118Z [INFO] Project c:\Users\rebek\guimaraes-rebecca-tester-java\guimaraes-rebecca-tester-java is a maven project, try to get java version from pom.xml
+2025-12-30T13:15:21.119Z [INFO] Project java version: 8
+2025-12-30T13:15:21.120Z [INFO] Maven project detected.
+2025-12-30T13:15:21.120Z [INFO] Build tool type: mvn
+2025-12-30T13:15:21.137Z [ERROR] JDK is not provided or detected for Java 8.
+2025-12-30T14:00:16.744Z [ERROR] Failed to prepare project configuration or init upgrade options: Canceled.
