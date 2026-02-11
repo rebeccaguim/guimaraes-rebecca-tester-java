@@ -20,11 +20,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-       - name: Lancer Maven 
-          run: mvn clean verify -e
-
+      - name: Lancer Maven (logs détaillés)
+        run: mvn clean verify -e
 
       - name: Analyse SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
