@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Télécharger le code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Installer Java
         uses: actions/setup-java@v4
@@ -19,11 +21,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Lancer Maven 
-        run: mvn -e clean test -DskipTests
-
+      - name: Lancer Maven (dev = sans tests)
+        run: mvn clean test -DskipTests -e
 
       - name: Analyse SonarCloud
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=rebeccaguim_guimaraes-rebecca-tester-java
+            -Dsonar.organization=rebeccaguim-2
+            -Dsonar.sources=src/main
+            -Dsonar.tests=src/test
+            -Dsonar.java.binaries=target/classes
