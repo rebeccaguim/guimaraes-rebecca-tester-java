@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Lancer Maven (logs détaillés)
+      - name: Lancer Maven 
         run: mvn clean verify -DskipTests
 
 
