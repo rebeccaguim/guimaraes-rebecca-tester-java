@@ -20,7 +20,7 @@ jobs:
           java-version: '17'
 
       - name: Lancer Maven 
-        run: run: mvn -e clean test -DskipTests
+        run: mvn -e clean test -DskipTests
 
 
       - name: Analyse SonarCloud
