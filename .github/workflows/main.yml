@@ -19,8 +19,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Lancer Maven (dev = sans tests)
-        run: mvn clean verify -DskipTests -e
+      - name: Lancer Maven 
+        run: run: mvn -e clean test -DskipTests
+
 
       - name: Analyse SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
