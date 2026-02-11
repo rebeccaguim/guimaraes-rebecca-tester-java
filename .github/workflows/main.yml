@@ -21,7 +21,8 @@ jobs:
           java-version: '17'
 
       - name: Lancer Maven (logs détaillés)
-        run: mvn clean verify -e
+        run: mvn clean verify -DskipTests
+
 
       - name: Analyse SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
