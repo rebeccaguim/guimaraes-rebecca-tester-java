@@ -95,7 +95,7 @@ public class ParkingDataBaseIT {
                 0.01);
     }
 
-    // ✅ Helper method to update IN_TIME
+    //  Helper method to update IN_TIME
     private void updateInTimeInDb(int ticketId, Date newInTime) throws Exception {
 
         Connection con = null;
