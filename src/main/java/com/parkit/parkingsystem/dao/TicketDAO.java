@@ -16,7 +16,7 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class TicketDAO {
 
-    private static final Logger logger = LogManager.getLogger("TicketDAO");
+    private static final Logger logger = LogManager.getLogger(TicketDAO.class);
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
@@ -29,54 +29,30 @@ public class TicketDAO {
             con = dataBaseConfig.getConnection();
             ps = con.prepareStatement(DBConstants.SAVE_TICKET, PreparedStatement.RETURN_GENERATED_KEYS);
 
-            // 1) Parking number
             ps.setInt(1, ticket.getParkingSpot().getId());
-
-            // 2) Vehicle registration number
             ps.setString(2, ticket.getVehicleRegNumber());
-
-            // 3) Price (0 at entry)
             ps.setDouble(3, ticket.getPrice());
-
-            // 4) Entry time
             ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
-
-            // 5) OUT_TIME is null at entry
-            ps.setNull(5, java.sql.Types.TIMESTAMP);
+            ps.setNull(5, java.sql.Types.TIMESTAMP); // OUT_TIME null at entry
 
             ps.executeUpdate();
 
-            // Retrieve generated ticket ID
             rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 ticket.setId(rs.getInt(1));
-            }
-
-            // Commit if auto-commit is disabled
-            if (!con.getAutoCommit()) {
-                con.commit();
             }
 
             return true;
 
         } catch (Exception ex) {
             logger.error("Error saving ticket info", ex);
-
-            // Rollback if needed
-            try {
-                if (con != null && !con.getAutoCommit()) {
-                    con.rollback();
-                }
-            } catch (Exception ignored) {
-            }
-
-            return false;
-
         } finally {
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
             dataBaseConfig.closeConnection(con);
         }
+
+        return false;
     }
 
     public Ticket getTicket(String vehicleRegNumber) {
@@ -89,31 +65,26 @@ public class TicketDAO {
         try {
             con = dataBaseConfig.getConnection();
             ps = con.prepareStatement(DBConstants.GET_TICKET);
-
-            // VEHICLE_REG_NUMBER
             ps.setString(1, vehicleRegNumber);
 
             rs = ps.executeQuery();
             if (rs.next()) {
                 ticket = new Ticket();
-
                 ParkingSpot parkingSpot = new ParkingSpot(
                         rs.getInt(1),
                         ParkingType.valueOf(rs.getString(6)),
                         false
                 );
-
                 ticket.setParkingSpot(parkingSpot);
                 ticket.setId(rs.getInt(2));
                 ticket.setVehicleRegNumber(vehicleRegNumber);
                 ticket.setPrice(rs.getDouble(3));
-                ticket.setInTime(rs.getTimestamp(4));   // Timestamp extends Date
-                ticket.setOutTime(rs.getTimestamp(5));  // Can be null
+                ticket.setInTime(rs.getTimestamp(4));
+                ticket.setOutTime(rs.getTimestamp(5)); // can be null
             }
 
         } catch (Exception ex) {
             logger.error("Error fetching ticket", ex);
-
         } finally {
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
@@ -131,45 +102,21 @@ public class TicketDAO {
             con = dataBaseConfig.getConnection();
             ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
 
-            // 1) Updated price
             ps.setDouble(1, ticket.getPrice());
-
-            // 2) OUT_TIME
-            if (ticket.getOutTime() != null) {
-                ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
-            } else {
-                ps.setNull(2, java.sql.Types.TIMESTAMP);
-            }
-
-            // 3) Update by ticket ID (reliable)
-            ps.setInt(3, ticket.getId());
+            ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
+            ps.setInt(3, ticket.getId()); // ✅ update by ID
 
             int updated = ps.executeUpdate();
-
-            // Commit if auto-commit is disabled
-            if (!con.getAutoCommit()) {
-                con.commit();
-            }
-
             return updated > 0;
 
         } catch (Exception ex) {
             logger.error("Error updating ticket info", ex);
-
-            // Rollback if needed
-            try {
-                if (con != null && !con.getAutoCommit()) {
-                    con.rollback();
-                }
-            } catch (Exception ignored) {
-            }
-
-            return false;
-
         } finally {
             dataBaseConfig.closePreparedStatement(ps);
             dataBaseConfig.closeConnection(con);
         }
+
+        return false;
     }
 
     public int getNbTicket(String vehicleRegNumber) {
@@ -191,7 +138,6 @@ public class TicketDAO {
 
         } catch (Exception ex) {
             logger.error("Error counting tickets for vehicle", ex);
-
         } finally {
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);

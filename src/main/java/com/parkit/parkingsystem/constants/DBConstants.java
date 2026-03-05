@@ -11,7 +11,7 @@ public class DBConstants {
     public static final String SAVE_TICKET =
             "insert into ticket(PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME) values(?,?,?,?,?)";
 
-    // Safe & reliable update: update the ticket by its unique ID
+    // ✅ Update by ID (reliable)
     public static final String UPDATE_TICKET =
             "update ticket set PRICE=?, OUT_TIME=? where ID=?";
 
